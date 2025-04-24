@@ -1,4 +1,4 @@
-# MP3PlayerForM5Cardputer
+# MP3PlayerForM5Cardputer(mod)
 
 Version 1.0
 How to use:
@@ -12,6 +12,8 @@ Version 1.1 Updates:
 * g to toggle graphics
 it is still in process so can have bugs
 Please report any bug on github and feel free to provide sugesstions
+
+-----------------------------------------------------------------------
 Version 1.1 Modify:
 * directory scan(under /mp3 folder) 
 * then file select(press arrow up(;) and down(.) set( )space)
