@@ -1,90 +1,71 @@
 #include <SD.h>
-String files[2000] =
-{
-};
+String files[2000] = {};
+String files2[2000] = {};
 int no_of_files = 0;
-bool stop_scan = false;
-void listDir(fs::FS &fs, const char *dirname, uint8_t levels) {
-    // printf_log("Listing directory: %s\n", dirname);
-    if(stop_scan){
-      return;
+int selectNum;
+extern void listFolder(void);
+
+void printDirectory(File dir) {
+  while (true) {
+    //フォルダー内の次のファイル
+    File entry = dir.openNextFile();
+    if (!entry) {
+      break;  //オープンする内容が無ければループを抜ける
     }
-    File root = fs.open(dirname);
-    if (!root) {
-        // println_log("Failed to open directory");
-        return;
+    //ファイル（フォルダー）名の表示
+    if (entry.isDirectory()) {
+      //フォルダーならフォルダーの中を表示
+      printDirectory(entry);
+    } else {
+      //ファイルサイズの表示
+      files[no_of_files] = entry.path();
+      files2[no_of_files++] = entry.name();
     }
-    if (!root.isDirectory()) {
-        // println_log("Not a directory");
-        return;
+    entry.close();  //終わったら呼び出し先に戻る
+  }
+}
+size_t selfile() {
+  M5Cardputer.Lcd.fillScreen(BLACK);
+  M5Cardputer.Lcd.setCursor(0, 0);
+  M5Cardputer.Lcd.println("*** File List ***");
+
+  selectNum = 0;
+  listFolder();
+  bool exitMenu = false;
+
+  while (!exitMenu) {
+    M5Cardputer.update();
+    if (M5Cardputer.Keyboard.isKeyPressed(';')) {
+      if (selectNum > 0) {
+        selectNum--;
+        listFolder();
+      }
     }
-
-    File file = root.openNextFile();
-    while (file) {
-
-      bool scan = false;
-
-        if (file.isDirectory()) {
-            // Serial.print("  DIR : ");
-            // println_log(file.name());
-        M5Cardputer.update();
-                M5Cardputer.Display.drawString("Do you want to scan(Y/N/C)",
-                        1,
-                        M5Cardputer.Display.height() / 2);
-                        String filename = file.name();
-                M5Cardputer.Display.drawString(filename,
-                        1,
-                        (M5Cardputer.Display.height()+20) / 2); 
-        while(1){
-          M5Cardputer.update();
-          if(M5Cardputer.Keyboard.isChange()) break;
-        } 
-
-
-          if(M5Cardputer.Keyboard.isKeyPressed('y')){
-            scan = true;
-          }
-          if(M5Cardputer.Keyboard.isKeyPressed('n')){
-            scan = false;
-          }
-          if(M5Cardputer.Keyboard.isKeyPressed('c')){
-            stop_scan = true;
-            return;
-          }
-
-                                     
-            if (levels && scan) {
-                listDir(fs, file.path(), levels - 1);
-            }
-        } else {
-          String filename = file.name();
-          String filepath = file.path();
-          if (filename.lastIndexOf(".mp3") > 0 && filepath.length()<256)     
-          if(filepath != "")         
-            {files[no_of_files++] = filepath;
-                              M5Cardputer.Display.drawString("Current File:",
-                        1,
-                        M5Cardputer.Display.height()+40 / 2);
-                        String filename = file.name();
-                M5Cardputer.Display.drawString(filename,
-                        1,
-                        (M5Cardputer.Display.height()+60) / 2); 
-            }
-            
-            // Serial.print("  FILE: ");
-            // Serial.print(file.name());
-            // Serial.print("  SIZE: ");
-            // println_log(files[no_of_files]);
-        }
-
-
-        if(M5Cardputer.Keyboard.isChange()){
-          if(M5Cardputer.Keyboard.isKeyPressed('s')){
-            levels = 0;
-            return;
-          }
-        }
-
-        file = root.openNextFile();
+    if (M5Cardputer.Keyboard.isKeyPressed('.')) {
+      if (selectNum < no_of_files - 1) {
+        selectNum++;
+        listFolder();
+      }
     }
+    if (M5Cardputer.Keyboard.isKeyPressed(' ')) {
+      exitMenu = true;
+    }
+    delay(100);
+  }
+  return selectNum;
+}
+
+void listFolder() {
+  M5Cardputer.Lcd.fillScreen(BLACK);
+  M5Cardputer.Lcd.setCursor(0, 0);
+  M5Cardputer.Lcd.println("*** File List ***");
+
+  M5Cardputer.Lcd.setCursor(0, 30);
+  for (int i = selectNum; i < no_of_files; i++) {
+    if (i == selectNum) {
+      M5Cardputer.Lcd.println("> " + files2[i]);
+    } else {
+      M5Cardputer.Lcd.println("  " + files2[i]);
+    }
+  }
 }
