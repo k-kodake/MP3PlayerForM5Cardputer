@@ -14,13 +14,13 @@ it is still in process so can have bugs
 Please report any bug on github and feel free to provide sugesstions
 Version 1.1 Modify:
 * directory scan(under /mp3 folder) 
-  then file select(press arrow up(;) and down(.) set( )space)
+* then file select(press arrow up(;) and down(.) set( )space)
 * after mp3 play 
-  for next song press 'BtnGo'
-  arrow left(,) before and right(.) next
-  volume control arrow up(;) and down(.)
-  p for play and pause
-  ( )space to toggle graphics
+* for next song press 'BtnGo'
+*  arrow left(,) before and right(.) next
+*  volume control arrow up(;) and down(.)
+*  p for play and pause
+*  ( )space to toggle graphics
 
 
 Depedencies:
